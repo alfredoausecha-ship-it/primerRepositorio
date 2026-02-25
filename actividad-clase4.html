@@ -2,103 +2,63 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Actividad Clase 4</title>
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f6f8;
-  margin: 0;
-  padding: 0;
-}
-
-.container {
-  max-width: 900px;
-  margin: auto;
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-h1, h2 {
-  color: #2c3e50;
-}
-
-h1 {
-  text-align: center;
-}
-
-.section {
-  margin-top: 30px;
-}
-
-label {
-  font-weight: bold;
-}
-
-.line {
-  border-bottom: 1px solid #ccc;
-  margin: 8px 0 16px 0;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-th, td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: center;
-}
-
-th {
-  background-color: #e9eef3;
-}
-
-.note {
-  background: #eef7ff;
-  padding: 15px;
-  border-left: 4px solid #3498db;
-  margin-top: 20px;
-}
-
-.footer {
-  margin-top: 30px;
-  padding: 15px;
-  background: #f1f1f1;
-  border-radius: 8px;
-}
-</style>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+ 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistemas Distribuidos - Grupo 2</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.5; color: #333; max-width: 900px; margin: 20px auto; }
+        .section { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 5px; background-color: #f9f9f9; }
+        h2 { border-bottom: 2px solid #333; padding-bottom: 5px; color: #2c3e50; }
+        .line { border-bottom: 1px solid #ddd; margin: 8px 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #bbb; padding: 10px; text-align: left; }
+        th { background-color: #eee; }
+        .note { background-color: #e7f3fe; border-left: 6px solid #2196F3; padding: 15px; margin-top: 20px; }
+        .footer { background-color: #333; color: white; padding: 15px; margin-top: 20px; border-radius: 5px; }
+    </style>
 </head>
 <body>
 
-<div class="container">
-
-<h1>🌐 Actividad Clase 4</h1>
-<h2>Comunicación entre Servicios + REST + Eventos + Service Discovery</h2>
-
-<p><strong>Equipo:</strong> ____________________</p>
-<p><strong>Proyecto:</strong> ____________________</p>
+<p><strong>Equipo:</strong> Grupo 2 </p>
+<p><strong>Proyecto:</strong> Arquitectura Distribuida de Domicilios </p>
 
 <div class="section">
 <h2>🪜 1. Interacciones entre Servicios</h2>
 
 <p><strong>Interacción 1</strong></p>
-<label>Servicio que envía:</label>
+<label>Servicio que envía: <strong>Pedidos</strong></label>
 <div class="line"></div>
-<label>Servicio que recibe:</label>
+<label>Servicio que recibe: <strong>Inventario</strong></label>
 <div class="line"></div>
-<label>Información enviada:</label>
+<label>Información enviada: Metadata del producto (UUID), cantidad solicitada y solicitud de reserva de stock.</label>
 <div class="line"></div>
-<label>¿Qué sucede si no responde?</label>
+<label>¿Qué sucede si no responde? Se produce un "Timeout". El sistema debe revertir la transacción para evitar inconsistencias y notificar al usuario sobre la indisponibilidad temporal del catálogo.</label>
 <div class="line"></div>
 
 <p><strong>Interacción 2</strong></p>
+<label>Servicio que envía: <strong>Pedidos</strong></label>
+<div class="line"></div>
+<label>Servicio que recibe: <strong>Pagos</strong></label>
+<div class="line"></div>
+<label>Información enviada: Hash de transacción, monto total facturado y token de validación del método de pago.</label>
+<div class="line"></div>
+<label>¿Qué sucede si no responde? La orden entra en un estado de "Pendiente de Verificación". No se libera el pedido a cocina hasta que el servicio de pagos confirme el éxito de la operación.</label>
 <div class="line"></div>
 
 <p><strong>Interacción 3</strong></p>
+<label>Servicio que envía: <strong>Autenticación</strong></label>
+<div class="line"></div>
+<label>Servicio que recibe: <strong>Usuario (DB Service)</strong></label>
+<div class="line"></div>
+<label>Información enviada: Credenciales cifradas (Email/Pass) para validación de identidad en la capa de datos.</label>
+<div class="line"></div>
+<label>¿Qué sucede si no responde? Se deniega el acceso por falla de comunicación en el backend. El cliente recibe un error 503 (Servicio no disponible) impidiendo el inicio de sesión.</label>
 <div class="line"></div>
 </div>
 
@@ -113,22 +73,22 @@ th {
 <th>¿Por qué?</th>
 </tr>
 <tr>
-<td>1</td>
+<td>Pedidos e Inventarios</td>
+<td style="text-align:center;">X</td>
 <td></td>
-<td></td>
-<td></td>
+<td>Es una consulta síncrona; el cliente necesita confirmar existencia física antes de comprometer el pago.</td>
 </tr>
 <tr>
-<td>2</td>
+<td>Autenticación y Usuario</td>
+<td style="text-align:center;">X</td>
 <td></td>
-<td></td>
-<td></td>
+<td>Requiere un "Handshake" inmediato para validar la sesión y permitir la navegación segura del usuario.</td>
 </tr>
 <tr>
-<td>3</td>
+<td>Pedidos y Notificaciones</td>
 <td></td>
-<td></td>
-<td></td>
+<td style="text-align:center;">X</td>
+<td>Es comunicación reactiva (Fire-and-forget). El sistema de pedidos no debe esperar a que se envíe un SMS para continuar.</td>
 </tr>
 </table>
 </div>
@@ -141,83 +101,81 @@ th {
 <th>Interacción</th>
 <th>Síncrono</th>
 <th>Asíncrono</th>
-<th>Justificación</th>
+<th>Justificación Técnica</th>
 </tr>
 <tr>
-<td>1</td>
+<td>Pedidos -> Inventario</td>
+<td style="text-align:center;">X</td>
 <td></td>
-<td></td>
-<td></td>
+<td>Para garantizar la consistencia de datos (evitar sobreventa), el hilo de ejecución debe esperar la respuesta del stock.</td>
 </tr>
 <tr>
-<td>2</td>
+<td>Autenticación -> Usuario</td>
+<td style="text-align:center;">X</td>
 <td></td>
-<td></td>
-<td></td>
+<td>La experiencia de usuario depende de una respuesta inmediata para autorizar el acceso a la plataforma.</td>
 </tr>
 <tr>
-<td>3</td>
+<td>Pedidos -> Notificaciones</td>
 <td></td>
-<td></td>
-<td></td>
+<td style="text-align:center;">X</td>
+<td>Permite desacoplar los servicios. Si el servicio de notificaciones tiene alta latencia, no afecta la creación del pedido.</td>
 </tr>
 </table>
 </div>
 
 <div class="section">
 <h2>🪜 4. Eventos Importantes del Sistema</h2>
-1️⃣ ______________________________________<br><br>
-2️⃣ ______________________________________<br><br>
-3️⃣ ______________________________________
+1️⃣ <strong>OrderCreated:</strong> Gatilla la reserva de productos y el cálculo de ruta logística. <br><br>
+2️⃣ <strong>PaymentProcessed:</strong> Evento que define si la orden avanza a preparación o se descarta. <br><br>
+3️⃣ <strong>StatusChanged:</strong> Notifica cambios de estado en tiempo real (Picking, En camino, Arribado). <br><br>
 </div>
 
 <div class="section">
 <h2>🪜 5. Análisis de Fallos</h2>
-<label>Servicio más crítico:</label>
+<label>Servicio más crítico: <strong>Core de Pedidos (Orquestador)</strong></label>
 <div class="line"></div>
-<label>¿Qué pasaría si falla?</label>
+<label>¿Qué pasaría si falla? Se produce un "Single Point of Failure" (Punto único de fallo) que inhabilita la capacidad transaccional de la compañía.</label>
 <div class="line"></div>
-<label>¿El sistema debe detenerse o continuar?</label>
+<label>¿El sistema debe detenerse o continuar? Debe operar en modo degradado. Los usuarios pueden consultar historial y menús (Lectura), pero las operaciones de escritura (Pedidos) quedan suspendidas.</label>
 <div class="line"></div>
-<label>¿Cómo podrían manejar este fallo?</label>
+<label>¿Cómo podrían manejar este fallo? Mediante la implementación de <strong>Réplicas de Servicio</strong>, balanceadores de carga y un patrón de <em>Circuit Breaker</em> para evitar el colapso en cascada.</label>
 <div class="line"></div>
 </div>
 
 <div class="section">
 <h2>🪜 6. Service Discovery</h2>
-<label>¿Qué problema ocurre si cambia la IP de un servicio?</label>
+<label>¿Qué problema ocurre si cambia la IP de un servicio? Se rompe el enlace de comunicación (Hardcoding de IPs), provocando errores de conexión en el orquestador.</label>
 <div class="line"></div>
-<label>¿Cómo sabría un servicio dónde encontrar otro?</label>
+<label>¿Cómo sabría un servicio dónde encontrar otro? Consultando un <strong>Service Registry</strong> (como Eureka o Consul) que mantiene un mapeo dinámico de nombres de servicio a direcciones IP.</label>
 <div class="line"></div>
-<label>¿Por qué sería útil Service Discovery?</label>
+<label>¿Por qué sería útil Service Discovery? Permite la <strong>escalabilidad horizontal</strong> automática; el sistema detecta nuevas instancias del servicio sin configuración manual.</label>
 <div class="line"></div>
-<label>¿Dónde lo aplicarían en su sistema?</label>
+<label>¿Dónde lo aplicarían en su sistema? En el API Gateway para enrutar tráfico hacia los microservicios de Pedidos, Pagos y Usuarios.</label>
 <div class="line"></div>
 </div>
 
 <div class="section">
 <h2>🪜 7. Mini Diagrama</h2>
-<p>Dibujen:</p>
-<p><strong>Servicio A → Service Discovery → Servicio B</strong></p>
+<p>Flujo de Resolución de Nombres:</p>
+<p><strong>[Servicio Pedidos] ➔ [Consulta Registro: "Pagos"] ➔ [Obtiene IP Activa] ➔ [Envía Request a Pagos]</strong></p>
 </div>
 
 <div class="note">
-💡 <strong>Ayuda rápida</strong><br>
-REST → petición directa<br>
-Evento → algo ocurrió<br>
-Síncrono → espera respuesta<br>
-Asíncrono → continúa sin esperar<br>
-Service Discovery → permite encontrar servicios automáticamente
+💡 <strong>Glosario de Soporte</strong><br>
+<strong>REST:</strong> Protocolo basado en HTTP para peticiones directas.<br>
+<strong>Evento:</strong> Mensaje que indica un cambio de estado en el sistema.<br>
+<strong>Síncrono:</strong> Flujo bloqueante que espera respuesta.<br>
+<strong>Asíncrono:</strong> Flujo no bloqueante basado en colas de mensajes.<br>
+<strong>Service Discovery:</strong> Mecanismo de detección automática de nodos de red.
 </div>
 
 <div class="footer">
-🎤 El equipo debe poder explicar:<br>
-✔ una interacción importante<br>
-✔ un evento del sistema<br>
-✔ qué pasa si un servicio falla<br>
-✔ dónde usarían Service Discovery
+🎤 <strong>Guía de Defensa del Proyecto:</strong><br>
+✔ Expliquen cómo el inventario síncrono evita la <strong>consistencia eventual</strong> no deseada.<br>
+✔ Mencionen que las notificaciones son asíncronas para mejorar el <strong>Throughput</strong> del sistema.<br>
+✔ Resalten que el <strong>Service Discovery</strong> es vital en entornos de contenedores (Docker/K8s).
 </div>
 
-</div>
 </body>
 </html>
